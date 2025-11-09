@@ -1,32 +1,30 @@
 package core.factory;
 
-import core.products.AccessoryPack;
-import core.products.Engine;
-import core.products.Suspension;
-import core.products.Tire;
+import core.products.*;
+import core.products.impl.desert.DesertEngine;
+import core.products.impl.desert.DesertTire;
+import core.products.impl.desert.DesertSuspension;
+import core.products.impl.desert.DesertAccessoryPack;
 
-/**
- * Fábrica concreta (ESQUELETO). En Etapa 2 devolverá instancias reales del modo desierto.
- */
 public class DesertAdventureFactory implements AdventureFactory {
 
     @Override
     public Engine createEngine() {
-        return null; // Etapa 2: devolver DesertEngine
+        return new DesertEngine();
     }
 
     @Override
     public Tire createTire() {
-        return null; // Etapa 2: devolver DesertTire
+        return new DesertTire();
     }
 
     @Override
     public Suspension createSuspension() {
-        return null; // Etapa 2: devolver DesertSuspension
+        return new DesertSuspension();
     }
 
     @Override
     public AccessoryPack createAccessoryPack() {
-        return null; // Etapa 2: devolver DesertAccessoryPack
+        return new DesertAccessoryPack();
     }
 }
