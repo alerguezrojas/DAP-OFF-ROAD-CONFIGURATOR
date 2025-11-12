@@ -4,29 +4,30 @@ import core.products.AccessoryPack;
 import core.products.Engine;
 import core.products.Suspension;
 import core.products.Tire;
+import core.products.impl.mountain.MountainAccessoryPack;
+import core.products.impl.mountain.MountainEngine;
+import core.products.impl.mountain.MountainSuspension;
+import core.products.impl.mountain.MountainTire;
 
-/**
- * Fábrica concreta (ESQUELETO). En Etapa 2 devolverá instancias reales del modo montaña.
- */
 public class MountainExpeditionFactory implements AdventureFactory {
 
     @Override
     public Engine createEngine() {
-        return null; // Etapa 2: devolver MountainEngine
+        return new MountainEngine();
     }
 
     @Override
     public Tire createTire() {
-        return null; // Etapa 2: devolver MountainTire
+        return new MountainTire();
     }
 
     @Override
     public Suspension createSuspension() {
-        return null; // Etapa 2: devolver MountainSuspension
+        return new MountainSuspension();
     }
 
     @Override
     public AccessoryPack createAccessoryPack() {
-        return null; // Etapa 2: devolver MountainAccessoryPack
+        return new MountainAccessoryPack();
     }
 }
