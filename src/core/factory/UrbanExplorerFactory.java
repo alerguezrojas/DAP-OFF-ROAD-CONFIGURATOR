@@ -1,32 +1,27 @@
 package core.factory;
 
-import core.products.AccessoryPack;
-import core.products.Engine;
-import core.products.Suspension;
-import core.products.Tire;
+import core.products.*;
+import core.products.impl.urban.*;
 
-/**
- * Fábrica concreta (ESQUELETO). En Etapa 2 devolverá instancias reales del modo urbano.
- */
 public class UrbanExplorerFactory implements AdventureFactory {
 
     @Override
     public Engine createEngine() {
-        return null; // Etapa 2: devolver UrbanEngine
+        return new UrbanEngine();
     }
 
     @Override
     public Tire createTire() {
-        return null; // Etapa 2: devolver UrbanTire
+        return new UrbanTire();
     }
 
     @Override
     public Suspension createSuspension() {
-        return null; // Etapa 2: devolver UrbanSuspension
+        return new UrbanSuspension();
     }
 
     @Override
     public AccessoryPack createAccessoryPack() {
-        return null; // Etapa 2: devolver UrbanAccessoryPack
+        return new UrbanAccessoryPack();
     }
 }
