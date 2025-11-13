@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventure Configurator 4x4</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #fff;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 1s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .adventure-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .adventure-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        .adventure-card:nth-child(1) { animation-delay: 0.1s; }
+        .adventure-card:nth-child(2) { animation-delay: 0.2s; }
+        .adventure-card:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+
+        .adventure-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .adventure-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .adventure-card:hover::before {
+            opacity: 1;
+        }
+
+        .adventure-card.selected {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #fff;
+            transform: scale(1.08);
+        }
+
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .adventure-card:hover .icon {
+            animation: spin 0.6s ease;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .description {
+            opacity: 0.8;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .config-button {
+            margin: 40px auto;
+            display: block;
+            padding: 20px 60px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .config-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(245, 87, 108, 0.6);
+        }
+
+        .config-button:active {
+            transform: scale(0.98);
+        }
+
+        .config-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        .results {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            display: none;
+            animation: slideIn 0.6s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .result-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .result-image {
+            text-align: center;
+            margin-bottom: 30px;
+            grid-column: 1 / -1;
+        }
+
+        .result-image img {
+            max-width: 100%;
+            max-height: 400px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: zoomIn 0.6s ease;
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .result-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 4px solid;
+            animation: popIn 0.5s ease forwards;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .result-item:nth-child(2) {
+            border-left-color: #ff6b6b;
+            animation-delay: 0.1s;
+        }
+        .result-item:nth-child(3) {
+            border-left-color: #4ecdc4;
+            animation-delay: 0.2s;
+        }
+        .result-item:nth-child(4) {
+            border-left-color: #ffe66d;
+            animation-delay: 0.3s;
+        }
+        .result-item:nth-child(5) {
+            border-left-color: #95e1d3;
+            animation-delay: 0.4s;
+        }
+
+        @keyframes popIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .result-value {
+            font-size: 1.1rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid white;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid rgba(255, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .error.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @media (max-width: 1200px) {
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .subtitle { font-size: 1rem; }
+            .adventure-card { padding: 30px; }
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="particles" id="particles"></div>
+
+<div class="container">
+    <header>
+        <h1>🏔️ ADVENTURE CONFIGURATOR</h1>
+        <p class="subtitle">Configura tu vehículo 4x4 perfecto para cualquier aventura</p>
+    </header>
+
+    <div class="adventure-selector">
+        <div class="adventure-card" data-type="DESERT">
+            <span class="icon">🏜️</span>
+            <h3>Aventura en Desierto</h3>
+            <p class="description">Equipamiento especializado para dunas, arena y temperaturas extremas. Preparado para conquistar los terrenos más áridos.</p>
+        </div>
+
+        <div class="adventure-card" data-type="MOUNTAIN">
+            <span class="icon">⛰️</span>
+            <h3>Expedición Montaña</h3>
+            <p class="description">Configuración para terrenos rocosos, pendientes pronunciadas y condiciones de alta montaña. Máxima tracción y resistencia.</p>
+        </div>
+
+        <div class="adventure-card" data-type="URBAN">
+            <span class="icon">🏙️</span>
+            <h3>Explorador Urbano</h3>
+            <p class="description">Optimizado para ciudad con eficiencia energética y confort. Perfecto balance entre aventura y vida diaria.</p>
+        </div>
+    </div>
+
+    <button class="config-button" id="configBtn" disabled>Selecciona una aventura</button>
+
+    <div class="error" id="error">
+        <strong>⚠️ Error:</strong> <span id="errorMsg"></span>
+    </div>
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Configurando tu vehículo perfecto...</p>
+    </div>
+
+    <div class="results" id="results">
+        <div class="result-header">
+            <h2 id="resultTitle">Tu Configuración</h2>
+            <p id="resultSubtitle"></p>
+        </div>
+        <div class="result-grid" id="resultGrid"></div>
+    </div>
+</div>
+
+<script>
+    // Crear partículas animadas de fondo
+    function createParticles() {
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            container.appendChild(particle);
+        }
+    }
+    createParticles();
+
+    let selectedType = null;
+    const cards = document.querySelectorAll('.adventure-card');
+    const configBtn = document.getElementById('configBtn');
+    const loading = document.getElementById('loading');
+    const results = document.getElementById('results');
+    const error = document.getElementById('error');
+    const API_BASE = 'http://localhost:8080/api/adventure';
+
+    // Selección de tarjeta
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            cards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedType = card.dataset.type;
+            configBtn.disabled = false;
+            configBtn.textContent = `Configurar ${card.querySelector('h3').textContent}`;
+            error.classList.remove('show');
+            results.classList.remove('show');
+        });
+    });
+
+    // Configurar aventura
+    configBtn.addEventListener('click', async () => {
+        if (!selectedType) return;
+
+        loading.classList.add('show');
+        error.classList.remove('show');
+        results.classList.remove('show');
+
+        try {
+            const response = await fetch(`${API_BASE}/configure/${selectedType}`);
+            const data = await response.json();
+
+            loading.classList.remove('show');
+
+            if (data.success) {
+                showResults(data);
+            } else {
+                showError(data.error || 'Error desconocido');
+            }
+        } catch (err) {
+            loading.classList.remove('show');
+            showError('No se pudo conectar con el servidor. Asegúrate de que el backend esté corriendo en localhost:8080');
+        }
+    });
+
+    function showResults(data) {
+        const config = data.configuration;
+        const titles = {
+            DESERT: '🏜️ Configuración Desierto',
+            MOUNTAIN: '⛰️ Configuración Montaña',
+            URBAN: '🏙️ Configuración Urbana'
+        };
+
+        const images = {
+            DESERT: 'images/desert-car.jpg',
+            MOUNTAIN: 'images/mountain-car.jpg',
+            URBAN: 'images/urban-car.jpg'
+        };
+
+        document.getElementById('resultTitle').textContent = titles[data.adventureType];
+        document.getElementById('resultSubtitle').textContent = 'Tu vehículo está listo para la aventura';
+
+        const gridHTML = `
+            <div class="result-image">
+                <img src="${images[data.adventureType]}" alt="${titles[data.adventureType]}">
+            </div>
+            <div class="result-item">
+                <div class="result-label">🔧 Motor</div>
+                <div class="result-value">${config.engine}</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">🛞 Neumáticos</div>
+                <div class="result-value">${config.tire}</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">⚙️ Suspensión</div>
+                <div class="result-value">${config.suspension}</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">🎒 Accesorios</div>
+                <div class="result-value">${config.accessories}</div>
+            </div>
+        `;
+
+        document.getElementById('resultGrid').innerHTML = gridHTML;
+        results.classList.add('show');
+    }
+
+    function showError(message) {
+        document.getElementById('errorMsg').textContent = message;
+        error.classList.add('show');
+    }
+</script>
+</body>
+</html>
